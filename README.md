@@ -94,7 +94,7 @@ Reg6
 ```
 
 
-### Meeting Ordering/Timing Requirements
+### Meeting Order/Timing Requirements
 
 The hardware implementation of SPI on the STM32F1 is broken: There is no hardware handling of NSS.
 It turns out to be just as easy, then, to implement SPI in software. We (ab)use the `sev` assembly
@@ -106,8 +106,10 @@ strobe must be delayed by two bits to be in time with the data on MOSI. Conseque
 correct timing, several no-ops need to be inserted at the begining and end of each transmission. It
 is possible to insert other useful instructions in place of no-ops, but it probably isn't worth it.
 
+![Signal Event Timing](SignalEventTiming.svg)
+
 Once we set the latch, the voltage on the key read pin will decay exponentially if it was high or
-increase like 1-exp(t) if it was previously low and is being brought up, so we don't want to read it
+increase like $1-e^t$ if it was previously low and is being brought up, so we don't want to read it
 immediately. In fact, immediately before setting the latch to "activate" the new bit pattern is the
 moment when the voltage on the input pin has had the most time to rise to its maximum or decay to
 its minimum level from the last time we set the latch. This is when we finally read it.
@@ -179,7 +181,7 @@ e) = b)  hword    UP-DOWN    hword ...
 
 The first solution trades time for space; the second trades space for time. It's not clear what the
 performance profile of #3 is. It's possible we could squeeze it into the no-ops. The bytes
-controlling the LEDs are pre- computed and incur no runtime overhead.
+controlling the LEDs are pre-computed and incur no runtime overhead.
 
 ### Performance of `readMatrix`
 
